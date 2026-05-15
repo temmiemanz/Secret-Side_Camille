@@ -6,565 +6,120 @@
 <title>Camille — Character Sheet</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Nunito', sans-serif;
-
-  /* concrete / rust / scrap grey base */
-  --bg:        #111110;
-  --bg-mid:    #181714;
-  --bg-card:   #1e1d1a;
-  --bg-tint:   #242220;
-  --bg-inset:  #161513;
-
-  /* grey scale — the junk */
-  --grey:      #8a8680;
-  --grey2:     #6a6660;
-  --grey3:     #4a4844;
-  --grey4:     #2e2d2a;
-  --rust:      #7a5c3a;
-
-  /* green — the takeover */
-  --vine:      #2d4a20;
-  --fern:      #3d6128;
-  --green:     #5a8a3a;
-  --moss:      #7aaa50;
-  --sprout:    #a0c870;
-  --pale:      #c8e0a8;
-
-  --border:    rgba(90,138,58,.10);
-  --border2:   rgba(90,138,58,.20);
-  --border-hot:rgba(90,138,58,.38);
-  --border-grey: rgba(138,134,128,.12);
-
-  --text:      #d8d4cc;
-  --text-mid:  #8a8680;
-  --text-dim:  #4a4844;
-
-  --sheet-width: 660px;
-  --pad: clamp(1.1rem, 4vw, 1.6rem);
-  --radius: 3px;
-  --radius-sm: 2px;
+:root{
+  --font-display:'Playfair Display',serif;--font-body:'Nunito',sans-serif;
+  --bg:#111110;--bg-card:#1e1d1a;--bg-tint:#242220;--bg-inset:#161513;
+  --grey:#8a8680;--grey2:#6a6660;--grey3:#4a4844;--rust:#7a5c3a;
+  --vine:#2d4a20;--fern:#3d6128;--green:#5a8a3a;--moss:#7aaa50;--pale:#c8e0a8;
+  --border:rgba(90,138,58,.10);--border2:rgba(90,138,58,.20);--border-hot:rgba(90,138,58,.38);
+  --border-grey:rgba(138,134,128,.12);
+  --text:#d8d4cc;--text-mid:#8a8680;--text-dim:#4a4844;
+  --pad:clamp(1.1rem,4vw,1.6rem);--radius:3px;--radius-sm:2px;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--bg);
-  background-image:
-    /* concrete texture suggestion */
-    radial-gradient(ellipse 90% 40% at 50% 0%,   rgba(90,138,58,.04) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 5%  80%,  rgba(45,74,32,.07)  0%, transparent 55%),
-    radial-gradient(ellipse 40% 50% at 95% 30%,  rgba(45,74,32,.05)  0%, transparent 55%);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: clamp(1rem, 4vw, 2.5rem) clamp(.75rem, 3vw, 1rem);
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* fine crack texture overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      87deg,
-      transparent 0px, transparent 60px,
-      rgba(138,134,128,.025) 60px, rgba(138,134,128,.025) 61px
-    ),
-    repeating-linear-gradient(
-      3deg,
-      transparent 0px, transparent 80px,
-      rgba(138,134,128,.018) 80px, rgba(138,134,128,.018) 81px
-    );
-  pointer-events: none;
-  z-index: 0;
-}
-
-.sheet {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: var(--sheet-width);
-  display: flex;
-  flex-direction: column;
-  gap: .6rem;
-}
-
-/* ── Card — concrete slab with vines pushing in ── */
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border-grey);
-  padding: clamp(.95rem, 3vw, 1.3rem) var(--pad);
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(138,134,128,.06);
-}
-
-/* vine streak across top */
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg,
-    rgba(45,74,32,.4) 0%,
-    var(--fern) 20%,
-    var(--green) 45%,
-    var(--moss) 65%,
-    var(--fern) 82%,
-    rgba(45,74,32,.3) 100%);
-}
-
-/* corner bracket — top left, rough */
-.card::after {
-  content: '';
-  position: absolute;
-  top: -1px; left: -1px;
-  width: 20px; height: 20px;
-  border-top: 2px solid var(--fern);
-  border-left: 2px solid var(--fern);
-  border-radius: var(--radius) 0 0 0;
-  opacity: .7;
-}
-
-.sec-label {
-  font-family: var(--font-display);
-  font-size: clamp(.6rem, 1.6vw, .67rem);
-  font-weight: 700;
-  font-style: italic;
-  letter-spacing: .1em;
-  color: var(--text-dim);
-  margin-bottom: clamp(.65rem, 2vw, .95rem);
-}
-
-/* ── Header ── */
-.header-card {
-  background: linear-gradient(160deg, #201f1c 0%, #1a1917 60%, #161412 100%);
-  border: 1px solid rgba(90,138,58,.3);
-  border-radius: var(--radius);
-  padding: clamp(1.1rem, 3vw, 1.6rem) var(--pad);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  box-shadow: inset 0 1px 0 rgba(90,138,58,.08);
-}
-.header-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg,
-    rgba(45,74,32,.5),
-    var(--fern) 25%,
-    var(--green) 50%,
-    var(--moss) 70%,
-    var(--fern) 88%,
-    rgba(45,74,32,.4));
-  box-shadow: 0 0 8px rgba(90,138,58,.4);
-}
-
-.corner-tl, .corner-br {
-  position: absolute;
-  width: 22px; height: 22px;
-  pointer-events: none;
-}
-.corner-tl {
-  top: -1px; left: -1px;
-  border-top: 2px solid var(--green);
-  border-left: 2px solid var(--green);
-  border-radius: var(--radius) 0 0 0;
-  box-shadow: -1px -1px 7px rgba(90,138,58,.4);
-}
-.corner-br {
-  bottom: -1px; right: -1px;
-  border-bottom: 2px solid var(--fern);
-  border-right: 2px solid var(--fern);
-  border-radius: 0 0 var(--radius) 0;
-  box-shadow: 1px 1px 6px rgba(90,138,58,.25);
-}
-
-.char-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 5.5vw, 2.2rem);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: .02em;
-  line-height: 1;
-  text-shadow: 0 0 20px rgba(90,138,58,.2);
-}
-.char-meta {
-  font-family: var(--font-body);
-  font-size: clamp(.68rem, 2vw, .76rem);
-  color: var(--text-mid);
-  margin-top: .3rem;
-  font-weight: 600;
-}
-.char-meta + .char-meta { margin-top: .1rem; }
-.char-meta.small {
-  font-size: clamp(.58rem, 1.7vw, .64rem);
-  color: var(--text-dim);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-}
-
-.badge { text-align: right; flex-shrink: 0; }
-.badge-label {
-  font-family: var(--font-body);
-  font-size: clamp(.54rem, 1.5vw, .6rem);
-  font-weight: 700;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: .14em;
-}
-.badge-value {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 6.5vw, 2.8rem);
-  font-weight: 700;
-  color: var(--moss);
-  line-height: 1;
-  margin-top: .1rem;
-  text-shadow: 0 0 14px rgba(90,138,58,.5);
-}
-
-/* ── Rolls ── */
-.rolls-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(.45rem, 1.8vw, .6rem);
-}
-.roll-card {
-  background: var(--bg-tint);
-  border: 1px solid var(--border-grey);
-  border-radius: var(--radius-sm);
-  padding: .75rem .9rem;
-  display: flex;
-  flex-direction: column;
-  gap: .2rem;
-  position: relative;
-  overflow: hidden;
-}
-.roll-card::before {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 2px;
-}
-.roll-card:nth-child(1)::before { background: var(--grey);  }
-.roll-card:nth-child(2)::before { background: var(--green); box-shadow: 0 0 4px rgba(90,138,58,.4); }
-.roll-card:nth-child(3)::before { background: var(--grey2); }
-
-.roll-abbr {
-  font-family: var(--font-body);
-  font-size: clamp(.56rem, 1.6vw, .62rem);
-  font-weight: 700;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: .14em;
-}
-.roll-mod {
-  font-family: var(--font-display);
-  font-size: clamp(.9rem, 2.8vw, 1.15rem);
-  font-weight: 700;
-  color: var(--text);
-}
-.roll-note {
-  font-size: clamp(.58rem, 1.6vw, .65rem);
-  color: var(--text-mid);
-  line-height: 1.4;
-}
-
-/* ── Abilities ── */
-.abilities-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(.55rem, 2vw, .75rem);
-}
-.abilities-grid.single { grid-template-columns: 1fr; }
-
-.ability {
-  background: var(--bg-tint);
-  border: 1px solid var(--border-grey);
-  border-radius: var(--radius-sm);
-  padding: .85rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: .4rem;
-  position: relative;
-  overflow: hidden;
-}
-/* vine creeping up left edge */
-.ability::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 2px; height: 100%;
-  background: linear-gradient(180deg,
-    var(--moss) 0%,
-    var(--green) 40%,
-    var(--fern) 70%,
-    var(--vine) 100%);
-  opacity: .5;
-}
-.ability.full { grid-column: 1 / -1; }
-
-.ability-header { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
-.ability-tag {
-  font-family: var(--font-body);
-  font-size: clamp(.48rem, 1.3vw, .53rem);
-  font-weight: 700;
-  color: var(--bg);
-  background: var(--grey2);
-  padding: 2px 8px;
-  border-radius: 2px;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  flex-shrink: 0;
-}
-.ability-tag.passive {
-  background: var(--vine);
-  color: var(--pale);
-  border: 1px solid var(--fern);
-}
-
-.ability-name {
-  font-family: var(--font-display);
-  font-size: clamp(.82rem, 2.4vw, .95rem);
-  font-weight: 700;
-  color: var(--text);
-}
-.ability-desc {
-  font-size: clamp(.63rem, 1.8vw, .7rem);
-  color: var(--text-mid);
-  line-height: 1.6;
-}
-
-.req-block {
-  margin-top: .3rem;
-  padding: .5rem .65rem;
-  background: var(--bg-inset);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-grey);
-  border-left: 2px solid var(--grey3);
-  display: flex;
-  flex-direction: column;
-  gap: .25rem;
-}
-.req-label {
-  font-family: var(--font-body);
-  font-size: clamp(.5rem, 1.4vw, .56rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  color: var(--text-dim);
-  margin-bottom: .1rem;
-}
-.req-item {
-  display: flex;
-  gap: .4rem;
-  align-items: flex-start;
-  font-size: clamp(.6rem, 1.7vw, .66rem);
-  color: var(--text-mid);
-  line-height: 1.45;
-}
-.req-dot {
-  width: 4px; height: 4px;
-  border-radius: 50%;
-  background: var(--grey3);
-  margin-top: 5px;
-  flex-shrink: 0;
-}
-
-.limits-label {
-  font-family: var(--font-body);
-  font-size: clamp(.5rem, 1.4vw, .56rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .14em;
-  color: var(--rust);
-  margin-top: .25rem;
-}
-.limit-item {
-  display: flex;
-  gap: .45rem;
-  align-items: flex-start;
-  margin-top: .3rem;
-}
-.limit-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--grey3);
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-.limit-text {
-  font-size: clamp(.6rem, 1.7vw, .66rem);
-  color: var(--text-mid);
-  line-height: 1.5;
-}
-.limit-text b { color: var(--text); font-weight: 700; }
-
-.range-table {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: .3rem;
-  margin-top: .35rem;
-  padding: .45rem .6rem;
-  background: var(--bg-inset);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-grey);
-}
-.range-cell {
-  display: flex;
-  flex-direction: column;
-  gap: .1rem;
-  text-align: center;
-}
-.range-n {
-  font-family: var(--font-display);
-  font-size: clamp(.62rem, 1.7vw, .7rem);
-  font-weight: 700;
-  color: var(--grey);
-}
-.range-v {
-  font-size: clamp(.56rem, 1.5vw, .6rem);
-  color: var(--text-dim);
-}
-
-/* ── Lore ── */
-.lore-block { display: flex; flex-direction: column; gap: .65rem; }
-.lore-text {
-  font-size: clamp(.66rem, 1.9vw, .73rem);
-  color: var(--text-mid);
-  line-height: 1.75;
-}
-.lore-text + .lore-text {
-  padding-top: .65rem;
-  border-top: 1px solid rgba(138,134,128,.08);
-}
-.lore-text em { color: var(--moss); font-style: italic; }
-.lore-text strong { color: var(--text); font-weight: 700; }
-
-/* ── SVG vines ── */
-.overgrown {
-  position: absolute;
-  pointer-events: none;
-  overflow: visible;
-}
-
-/* ── Footer ── */
-.footer {
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: clamp(.52rem, 1.5vw, .6rem);
-  font-style: italic;
-  color: var(--text-dim);
-  letter-spacing: .06em;
-  padding: .5rem 0 .25rem;
-}
-.footer span {
-  display: inline-block;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--fern);
-  vertical-align: middle;
-  margin: 0 .45rem .1rem;
-}
-
-@media (max-width: 480px) {
-  .rolls-grid { grid-template-columns: 1fr 1fr; }
-  .abilities-grid { grid-template-columns: 1fr; }
-  .ability.full { grid-column: 1; }
-  .range-table { grid-template-columns: 1fr 1fr; }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:var(--bg);background-image:radial-gradient(ellipse 90% 40% at 50% 0%,rgba(90,138,58,.04) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 5% 80%,rgba(45,74,32,.07) 0%,transparent 55%),radial-gradient(ellipse 40% 50% at 95% 30%,rgba(45,74,32,.05) 0%,transparent 55%);font-family:var(--font-body);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:0;overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(87deg,transparent 0px,transparent 60px,rgba(138,134,128,.025) 60px,rgba(138,134,128,.025) 61px),repeating-linear-gradient(3deg,transparent 0px,transparent 80px,rgba(138,134,128,.018) 80px,rgba(138,134,128,.018) 81px);pointer-events:none;z-index:0;}
+#leaf-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.sheet{position:relative;z-index:1;width:100%;max-width:660px;display:flex;flex-direction:column;gap:.6rem;padding:clamp(1rem,4vw,2rem) clamp(.75rem,3vw,1rem);}
+.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border-grey);padding:clamp(.95rem,3vw,1.3rem) var(--pad);position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(138,134,128,.06);}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(45,74,32,.4),var(--fern) 20%,var(--green) 45%,var(--moss) 65%,var(--fern) 82%,rgba(45,74,32,.3));}
+.card::after{content:'';position:absolute;top:-1px;left:-1px;width:20px;height:20px;border-top:2px solid var(--fern);border-left:2px solid var(--fern);border-radius:var(--radius) 0 0 0;opacity:.7;}
+.sec-label{font-family:var(--font-display);font-size:clamp(.6rem,1.6vw,.67rem);font-weight:700;font-style:italic;letter-spacing:.1em;color:var(--text-dim);margin-bottom:clamp(.65rem,2vw,.95rem);}
+.header-card{background:linear-gradient(160deg,#201f1c 0%,#1a1917 60%,#161412 100%);border:1px solid rgba(90,138,58,.3);border-radius:var(--radius);padding:clamp(1.1rem,3vw,1.6rem) var(--pad);position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;box-shadow:inset 0 1px 0 rgba(90,138,58,.08);}
+.header-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(45,74,32,.5),var(--fern) 25%,var(--green) 50%,var(--moss) 70%,var(--fern) 88%,rgba(45,74,32,.4));box-shadow:0 0 8px rgba(90,138,58,.4);}
+.corner-tl,.corner-br{position:absolute;width:22px;height:22px;pointer-events:none;}
+.corner-tl{top:-1px;left:-1px;border-top:2px solid var(--green);border-left:2px solid var(--green);border-radius:var(--radius) 0 0 0;box-shadow:-1px -1px 7px rgba(90,138,58,.4);}
+.corner-br{bottom:-1px;right:-1px;border-bottom:2px solid var(--fern);border-right:2px solid var(--fern);border-radius:0 0 var(--radius) 0;box-shadow:1px 1px 6px rgba(90,138,58,.25);}
+.char-name{font-family:var(--font-display);font-size:clamp(1.6rem,5.5vw,2.2rem);font-weight:700;color:var(--text);letter-spacing:.02em;line-height:1;text-shadow:0 0 20px rgba(90,138,58,.2);}
+.char-meta{font-family:var(--font-body);font-size:clamp(.68rem,2vw,.76rem);color:var(--text-mid);margin-top:.3rem;font-weight:600;}
+.char-meta+.char-meta{margin-top:.1rem;}
+.char-meta.small{font-size:clamp(.58rem,1.7vw,.64rem);color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:.1em;}
+.badge{text-align:right;flex-shrink:0;}
+.badge-label{font-family:var(--font-body);font-size:clamp(.54rem,1.5vw,.6rem);font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.14em;}
+.badge-value{font-family:var(--font-display);font-size:clamp(2rem,6.5vw,2.8rem);font-weight:700;color:var(--moss);line-height:1;margin-top:.1rem;text-shadow:0 0 14px rgba(90,138,58,.5);}
+.rolls-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(.45rem,1.8vw,.6rem);}
+.roll-card{background:var(--bg-tint);border:1px solid var(--border-grey);border-radius:var(--radius-sm);padding:.75rem .9rem;display:flex;flex-direction:column;gap:.2rem;position:relative;overflow:hidden;}
+.roll-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.roll-card:nth-child(1)::before{background:var(--grey);}
+.roll-card:nth-child(2)::before{background:var(--green);box-shadow:0 0 4px rgba(90,138,58,.4);}
+.roll-card:nth-child(3)::before{background:var(--grey2);}
+.roll-abbr{font-family:var(--font-body);font-size:clamp(.56rem,1.6vw,.62rem);font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.14em;}
+.roll-mod{font-family:var(--font-display);font-size:clamp(.9rem,2.8vw,1.15rem);font-weight:700;color:var(--text);}
+.roll-note{font-size:clamp(.58rem,1.6vw,.65rem);color:var(--text-mid);line-height:1.4;}
+.abilities-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(.55rem,2vw,.75rem);}
+.abilities-grid.single{grid-template-columns:1fr;}
+.ability{background:var(--bg-tint);border:1px solid var(--border-grey);border-radius:var(--radius-sm);padding:.85rem 1rem;display:flex;flex-direction:column;gap:.4rem;position:relative;overflow:hidden;}
+.ability::after{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:linear-gradient(180deg,var(--moss) 0%,var(--green) 40%,var(--fern) 70%,var(--vine) 100%);opacity:.5;}
+.ability.full{grid-column:1/-1;}
+.ability-header{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.ability-tag{font-family:var(--font-body);font-size:clamp(.48rem,1.3vw,.53rem);font-weight:700;color:var(--bg);background:var(--grey2);padding:2px 8px;border-radius:2px;text-transform:uppercase;letter-spacing:.1em;flex-shrink:0;}
+.ability-tag.passive{background:var(--vine);color:var(--pale);border:1px solid var(--fern);}
+.ability-name{font-family:var(--font-display);font-size:clamp(.82rem,2.4vw,.95rem);font-weight:700;color:var(--text);}
+.ability-desc{font-size:clamp(.63rem,1.8vw,.7rem);color:var(--text-mid);line-height:1.6;}
+.req-block{margin-top:.3rem;padding:.5rem .65rem;background:var(--bg-inset);border-radius:var(--radius-sm);border:1px solid var(--border-grey);border-left:2px solid var(--grey3);display:flex;flex-direction:column;gap:.25rem;}
+.req-label{font-family:var(--font-body);font-size:clamp(.5rem,1.4vw,.56rem);font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-dim);margin-bottom:.1rem;}
+.req-item{display:flex;gap:.4rem;align-items:flex-start;font-size:clamp(.6rem,1.7vw,.66rem);color:var(--text-mid);line-height:1.45;}
+.req-dot{width:4px;height:4px;border-radius:50%;background:var(--grey3);margin-top:5px;flex-shrink:0;}
+.limits-label{font-family:var(--font-body);font-size:clamp(.5rem,1.4vw,.56rem);font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--rust);margin-top:.25rem;}
+.limit-item{display:flex;gap:.45rem;align-items:flex-start;margin-top:.3rem;}
+.limit-dot{width:5px;height:5px;border-radius:50%;background:var(--grey3);margin-top:4px;flex-shrink:0;}
+.limit-text{font-size:clamp(.6rem,1.7vw,.66rem);color:var(--text-mid);line-height:1.5;}
+.limit-text b{color:var(--text);font-weight:700;}
+.range-table{display:grid;grid-template-columns:repeat(4,1fr);gap:.3rem;margin-top:.35rem;padding:.45rem .6rem;background:var(--bg-inset);border-radius:var(--radius-sm);border:1px solid var(--border-grey);}
+.range-cell{display:flex;flex-direction:column;gap:.1rem;text-align:center;}
+.range-n{font-family:var(--font-display);font-size:clamp(.62rem,1.7vw,.7rem);font-weight:700;color:var(--grey);}
+.range-v{font-size:clamp(.56rem,1.5vw,.6rem);color:var(--text-dim);}
+.lore-block{display:flex;flex-direction:column;gap:.65rem;}
+.lore-text{font-size:clamp(.66rem,1.9vw,.73rem);color:var(--text-mid);line-height:1.75;}
+.lore-text+.lore-text{padding-top:.65rem;border-top:1px solid rgba(138,134,128,.08);}
+.lore-text em{color:var(--moss);font-style:italic;}
+.lore-text strong{color:var(--text);font-weight:700;}
+.overgrown{position:absolute;pointer-events:none;overflow:visible;}
+.footer{text-align:center;font-family:var(--font-display);font-size:clamp(.52rem,1.5vw,.6rem);font-style:italic;color:var(--text-dim);letter-spacing:.06em;padding:.5rem 0 .25rem;}
+.footer span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--fern);vertical-align:middle;margin:0 .45rem .1rem;}
+@media(max-width:480px){.rolls-grid{grid-template-columns:1fr 1fr;}.abilities-grid{grid-template-columns:1fr;}.ability.full{grid-column:1;}.range-table{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
+<canvas id="leaf-canvas"></canvas>
 <div class="sheet">
-
-  <!-- Header -->
   <div class="header-card">
-    <div class="corner-tl"></div>
-    <div class="corner-br"></div>
-
-    <!-- overgrown vines bottom-right of header -->
+    <div class="corner-tl"></div><div class="corner-br"></div>
     <svg class="overgrown" style="right:0;bottom:0;width:180px;height:110px;opacity:.16" viewBox="0 0 180 110">
       <path d="M180,110 Q160,85 135,92 Q112,98 100,72 Q88,50 65,58 Q44,65 32,45 Q18,28 0,35" fill="none" stroke="#5a8a3a" stroke-width="2.5" stroke-linecap="round"/>
       <path d="M180,98 Q155,80 140,62 Q126,46 105,52 Q84,59 72,40" fill="none" stroke="#3d6128" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M175,110 Q165,96 148,102 Q134,107 124,92" fill="none" stroke="#2d4a20" stroke-width="1" stroke-linecap="round"/>
-      <!-- tendrils -->
-      <path d="M100,72 Q94,60 98,52" fill="none" stroke="#5a8a3a" stroke-width="1" stroke-linecap="round"/>
-      <path d="M65,58 Q58,48 62,40" fill="none" stroke="#3d6128" stroke-width="1" stroke-linecap="round"/>
-      <!-- leaves — grey-green -->
       <ellipse cx="100" cy="72" rx="8" ry="4.5" fill="#4a6e30" opacity=".9" transform="rotate(-28 100 72)"/>
-      <ellipse cx="65"  cy="58" rx="7" ry="4"   fill="#3d6128" opacity=".9" transform="rotate(22 65 58)"/>
+      <ellipse cx="65" cy="58" rx="7" ry="4" fill="#3d6128" opacity=".9" transform="rotate(22 65 58)"/>
       <ellipse cx="135" cy="92" rx="6" ry="3.5" fill="#5a8a3a" opacity=".9" transform="rotate(-15 135 92)"/>
-      <ellipse cx="32"  cy="45" rx="7" ry="4"   fill="#2d4a20" opacity=".8" transform="rotate(12 32 45)"/>
-      <ellipse cx="148" cy="62" rx="5" ry="3"   fill="#4a6e30" opacity=".7" transform="rotate(-40 148 62)"/>
+      <ellipse cx="32" cy="45" rx="7" ry="4" fill="#2d4a20" opacity=".8" transform="rotate(12 32 45)"/>
     </svg>
-
     <div>
       <div class="char-name">Camille</div>
-      <div class="char-meta">Player: Ryly</div>
+      <div class="char-meta">User: Camille &nbsp;·&nbsp; Player: Ryly</div>
       <div class="char-meta small">Conjuration EGG — Cobbling</div>
     </div>
-    <div class="badge">
-      <div class="badge-label">Level</div>
-      <div class="badge-value">01</div>
-    </div>
+    <div class="badge"><div class="badge-label">Level</div><div class="badge-value">01</div></div>
   </div>
-
-  <!-- Rolls -->
   <div class="card">
     <div class="sec-label">rolls</div>
     <div class="rolls-grid">
-      <div class="roll-card">
-        <div class="roll-abbr">STR</div>
-        <div class="roll-mod">d20 + 1</div>
-        <div class="roll-note">physical attacks and actions</div>
-      </div>
-      <div class="roll-card">
-        <div class="roll-abbr">MND</div>
-        <div class="roll-mod">d20 + 3</div>
-        <div class="roll-note">intellectual and mental actions</div>
-      </div>
-      <div class="roll-card">
-        <div class="roll-abbr">SOL</div>
-        <div class="roll-mod">d20 + 2</div>
-        <div class="roll-note">belief, instinct, willpower</div>
-      </div>
+      <div class="roll-card"><div class="roll-abbr">STR</div><div class="roll-mod">d20 + 1</div><div class="roll-note">physical attacks and actions</div></div>
+      <div class="roll-card"><div class="roll-abbr">MND</div><div class="roll-mod">d20 + 3</div><div class="roll-note">intellectual and mental actions</div></div>
+      <div class="roll-card"><div class="roll-abbr">SOL</div><div class="roll-mod">d20 - 1</div><div class="roll-note">belief, instinct, willpower</div></div>
     </div>
   </div>
-
-  <!-- Abilities -->
   <div class="card">
     <svg class="overgrown" style="top:0;right:0;width:100px;height:75px;opacity:.14" viewBox="0 0 100 75">
       <path d="M100,0 Q82,22 65,16 Q50,10 44,30 Q38,50 22,44 Q8,39 0,55" fill="none" stroke="#5a8a3a" stroke-width="2" stroke-linecap="round"/>
-      <path d="M100,10 Q88,28 72,22 Q58,16 52,34" fill="none" stroke="#3d6128" stroke-width="1.2" stroke-linecap="round"/>
       <ellipse cx="44" cy="30" rx="6.5" ry="3.5" fill="#4a6e30" transform="rotate(-22 44 30)"/>
-      <ellipse cx="65" cy="16" rx="5.5" ry="3"   fill="#3d6128" transform="rotate(28 65 16)"/>
-      <ellipse cx="22" cy="44" rx="6"   ry="3.5" fill="#2d4a20" transform="rotate(-8 22 44)"/>
+      <ellipse cx="65" cy="16" rx="5.5" ry="3" fill="#3d6128" transform="rotate(28 65 16)"/>
     </svg>
-
-    <div class="sec-label">abilities</div>
+    <div class="sec-label">abilities &nbsp;·&nbsp; Conjuration EGG — "Cobbling"</div>
     <div class="abilities-grid">
-
       <div class="ability full">
-        <div class="ability-header">
-          <span class="ability-tag">active</span>
-          <span class="ability-name">Assembly</span>
-        </div>
-        <div class="ability-desc">Build animate humanoid minions from scrap, junk, or dead organic material by hand. Every piece bonds instantly on contact — only the user can remove them. Minions understand user intent perfectly without words or gestures. Not smart, but completely loyal and accurate. Fallen minions can be cannibalized, their parts stripped and reused. No mental toll — building and holding a conversation happen simultaneously.</div>
+        <div class="ability-header"><span class="ability-tag">active</span><span class="ability-name">Assembly</span></div>
+        <div class="ability-desc">Build animate humanoid minions from scrap, junk, or dead organic material by hand. Every piece bonds instantly on contact — only the user can remove them. Minions understand user intent perfectly without words. Not smart, but completely loyal and accurate. Fallen minions can be cannibalized. No mental toll.</div>
         <div class="req-block">
           <div class="req-label">Valid minion requires</div>
           <div class="req-item"><div class="req-dot"></div>One head and a torso</div>
@@ -572,26 +127,11 @@ body::before {
           <div class="req-item"><div class="req-dot"></div>Every piece must be something the user can lift themselves</div>
         </div>
         <div class="limits-label">Limits</div>
-        <div class="limit-item">
-          <div class="limit-dot"></div>
-          <div class="limit-text">Living tissue does not respond — dead organic material only.</div>
-        </div>
-        <div class="limit-item">
-          <div class="limit-dot"></div>
-          <div class="limit-text">Minions cannot scout or operate independently — they go where the user goes and handle what comes close.</div>
-        </div>
-        <div class="limit-item">
-          <div class="limit-dot"></div>
-          <div class="limit-text">Lost limbs don't regenerate — must be physically reattached.</div>
-        </div>
-        <div class="limit-item">
-          <div class="limit-dot"></div>
-          <div class="limit-text">Leaving a 5ft radius from attached material causes it to lose adhesion.</div>
-        </div>
-        <div class="limit-item">
-          <div class="limit-dot"></div>
-          <div class="limit-text"><b>Range halves per active minion —</b></div>
-        </div>
+        <div class="limit-item"><div class="limit-dot"></div><div class="limit-text">Living tissue does not respond — dead organic material only.</div></div>
+        <div class="limit-item"><div class="limit-dot"></div><div class="limit-text">Minions can't scout or operate independently — they go where the user goes.</div></div>
+        <div class="limit-item"><div class="limit-dot"></div><div class="limit-text">Lost limbs don't regenerate — must be physically reattached.</div></div>
+        <div class="limit-item"><div class="limit-dot"></div><div class="limit-text">Leaving a 5ft radius from attached material causes it to lose adhesion.</div></div>
+        <div class="limit-item"><div class="limit-dot"></div><div class="limit-text"><b>Range halves per active minion —</b></div></div>
         <div class="range-table">
           <div class="range-cell"><div class="range-n">1</div><div class="range-v">300ft</div></div>
           <div class="range-cell"><div class="range-n">2</div><div class="range-v">150ft</div></div>
@@ -599,41 +139,158 @@ body::before {
           <div class="range-cell"><div class="range-n">4+</div><div class="range-v">and so on</div></div>
         </div>
       </div>
-
     </div>
   </div>
-
-  <!-- Lore -->
   <div class="card">
     <svg class="overgrown" style="bottom:0;left:0;width:130px;height:90px;opacity:.13" viewBox="0 0 130 90">
       <path d="M0,90 Q22,64 38,74 Q55,84 66,58 Q76,36 100,44 Q118,50 130,35" fill="none" stroke="#5a8a3a" stroke-width="2" stroke-linecap="round"/>
-      <path d="M0,78 Q18,60 34,68 Q50,76 62,52" fill="none" stroke="#3d6128" stroke-width="1.2" stroke-linecap="round"/>
-      <ellipse cx="66"  cy="58" rx="8"   ry="4.5" fill="#4a6e30" transform="rotate(24 66 58)"/>
-      <ellipse cx="38"  cy="74" rx="7"   ry="4"   fill="#3d6128" transform="rotate(-14 38 74)"/>
-      <ellipse cx="100" cy="44" rx="6"   ry="3.5" fill="#2d4a20" transform="rotate(38 100 44)"/>
-      <!-- small hanging tendrils -->
-      <path d="M66,58 Q62,68 65,76" fill="none" stroke="#3d6128" stroke-width="1" stroke-linecap="round"/>
-      <path d="M100,44 Q96,54 100,62" fill="none" stroke="#2d4a20" stroke-width="1" stroke-linecap="round"/>
+      <ellipse cx="66" cy="58" rx="8" ry="4.5" fill="#4a6e30" transform="rotate(24 66 58)"/>
+      <ellipse cx="38" cy="74" rx="7" ry="4" fill="#3d6128" transform="rotate(-14 38 74)"/>
+      <ellipse cx="100" cy="44" rx="6" ry="3.5" fill="#2d4a20" transform="rotate(38 100 44)"/>
     </svg>
-
     <div class="sec-label">lore</div>
     <div class="lore-block">
+
+      <!-- characteristics -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.28rem 2rem;padding-bottom:.9rem;border-bottom:1px solid var(--border-grey);">
+        <div style="display:flex;gap:.5rem;align-items:baseline;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">pronouns</span><span style="font-size:.64rem;color:var(--text-mid);">he / him</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">age</span><span style="font-size:.64rem;color:var(--text-mid);">19</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">height</span><span style="font-size:.64rem;color:var(--text-mid);">5'6"</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">health</span><span style="font-size:.64rem;color:var(--text-mid);">hemophilia · severe blood phobia · PTSD</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">hair</span><span style="font-size:.64rem;color:var(--text-mid);">dark blue · wavy · shoulder length</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">eyes</span><span style="font-size:.64rem;color:var(--text-mid);">green</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;grid-column:1/-1;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">clothes</span><span style="font-size:.64rem;color:var(--text-mid);">lab coat always on · gray long sleeve · black pants · dark blue knee-high socks · dress shoes · round glasses · lip-to-ear chain piercing</span></div>
+        <div style="display:flex;gap:.5rem;align-items:baseline;grid-column:1/-1;"><span style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;">personality</span><span style="font-size:.64rem;color:var(--text-mid);">neat freak · obsessive organizer · kind · cannot look at blood · panic attacks around the injured · keeps his hands moving so his mind stays quiet</span></div>
+      </div>
+
       <div class="lore-text">Camille's mother, Rose, died when he was eight — killed during a trade gone wrong, trying to secure medicine for the hemophilia she and his father Alexios both carried. She managed to take down the person who stabbed her before she bled out. His father heard the commotion. Camille followed. He still remembers the floor.</div>
-      <div class="lore-text">After that, Alex kept them moving — never staying anywhere long enough to become a target, building a quiet network of people he trusted enough to trade with. Medicine was rationed carefully because there was never enough. Eventually they found a hut in the woods and Alex made it a home, spending years teaching Camille how to take care of himself. <em>It wasn't much, but it was theirs.</em></div>
-      <div class="lore-text">When Camille was fourteen, Alex came back with a cut on his arm — nothing serious on its own, but hemophilia and a lack of proper supplies turned it into an infection. Camille went looking for help. He found a traveling medical group led by a man named Erick and came back with them after a week and a half away. <strong>He came back too late.</strong> Alex died that night. Camille asked Erick if he could join as a student before he finished crying.</div>
-      <div class="lore-text">The next four years were the closest thing to stability Camille had found. He and another student, Tucker, became inseparable — learning medicine, moving with the group, helping anyone who asked. Then a group asked for help and led them into an ambush. Erick, Tucker, all of them — gone. Camille hid and watched and couldn't do anything. By the time it was over, so was everything he'd rebuilt.</div>
-      <div class="lore-text">He tried to go back to medical work after that. <em>He couldn't.</em> The sight of blood made him physically sick. Injured people triggered panic he couldn't talk himself out of. What he found he could do was clean things. Organize things. Keep his hands moving and his mind off the parts of the past he couldn't look at. It became a habit. Then a need. The lab coat stays on. Everything has a place. As long as there's something to put in order, he can keep going.</div>
+      <div class="lore-text">After that, Alex kept them moving — never staying anywhere long enough to become a target. Eventually they found a hut in the woods and Alex made it a home, spending years teaching Camille how to take care of himself. <em>It wasn't much, but it was theirs.</em></div>
+      <div class="lore-text">When Camille was fourteen, Alex came home with a cut that hemophilia and poor supplies turned into a fatal infection. Camille found a traveling medical group led by a man named Erick and came back with them — but came back too late. <strong>Alex died that night.</strong> Camille asked Erick if he could join before he finished crying.</div>
+      <div class="lore-text">The next four years were stability. He and Tucker became inseparable — learning medicine, moving with the group, helping anyone who asked. Then a group asked for help and led them into an ambush. Erick, Tucker, all of them. Gone. Camille hid and watched and couldn't do anything. <em>He tried to go back to medical work after. He couldn't.</em> The sight of blood made him physically sick. What he found he could do was clean things. Organize things. Keep his hands moving. The lab coat stays on. Everything has a place.</div>
+
+      <!-- likes / dislikes -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding-top:.8rem;border-top:1px solid var(--border-grey);">
+        <div>
+          <div style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.35rem;">likes</div>
+          <div style="display:flex;flex-direction:column;gap:.18rem;">
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Science</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Animals</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Biology</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Music</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>The color blue</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-body);font-size:.5rem;font-weight:700;color:var(--text-dim);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.35rem;">dislikes</div>
+          <div style="display:flex;flex-direction:column;gap:.18rem;">
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Dirt</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Blood</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Roses</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Germs</div>
+            <div style="font-size:.64rem;color:var(--text-mid);padding-left:.75rem;position:relative;"><span style="position:absolute;left:0;color:var(--text-dim);">·</span>Cookies</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
-
-  <div class="footer">
-    stats update on level up only
-    <span></span>
-    post-collapse 2004
-    <span></span>
-    conjuration egg
-  </div>
-
+  <div class="footer">stats update on level up only<span></span>post-collapse 2004<span></span>conjuration egg</div>
 </div>
+<script>
+// React Bits-inspired: Falling leaves / organic particles
+const canvas = document.getElementById('leaf-canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', () => { resize(); initLeaves(); });
+
+class Leaf {
+  constructor() { this.reset(true); }
+  reset(initial) {
+    this.x = Math.random() * W;
+    this.y = initial ? Math.random() * H : -30;
+    this.r = Math.random() * 6 + 3;
+    this.rx = Math.random() * 4 + 2; // ellipse x radius
+    this.ry = Math.random() * 2.5 + 1.5; // ellipse y radius
+    this.vx = (Math.random() - .5) * .8;
+    this.vy = Math.random() * .6 + .2;
+    this.angle = Math.random() * Math.PI * 2;
+    this.spin = (Math.random() - .5) * .04;
+    this.wobble = Math.random() * Math.PI * 2;
+    this.life = 0; this.maxLife = Math.random() * 600 + 300;
+    const greens = ['#2d4a20','#3d6128','#4a6e30','#5a8a3a','#4a5828','#3a5020'];
+    this.color = greens[Math.floor(Math.random() * greens.length)];
+    this.alpha = Math.random() * .25 + .08;
+  }
+  update() {
+    this.wobble += .02;
+    this.x += this.vx + Math.sin(this.wobble) * .5;
+    this.y += this.vy;
+    this.angle += this.spin;
+    this.life++;
+    if (this.y > H + 30 || this.life > this.maxLife) this.reset(false);
+  }
+  draw() {
+    const t = this.life / this.maxLife;
+    const a = t < .2 ? t/.2 : t > .8 ? (1-t)/.2 : 1;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, this.rx, this.ry, 0, 0, Math.PI*2);
+    ctx.fillStyle = this.color + Math.round(this.alpha * a * 255).toString(16).padStart(2,'0');
+    ctx.fill();
+    // vein
+    ctx.beginPath();
+    ctx.moveTo(-this.rx, 0); ctx.lineTo(this.rx, 0);
+    ctx.strokeStyle = `rgba(90,138,58,${this.alpha * a * .4})`;
+    ctx.lineWidth = .5; ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// Vine growth particles — tiny dots that crawl upward along wall edges
+class VineParticle {
+  constructor() { this.reset(true); }
+  reset(initial) {
+    this.side = Math.random() < .5 ? 0 : W; // left or right wall
+    this.x = this.side + (this.side === 0 ? 1 : -1) * Math.random() * 15;
+    this.y = initial ? Math.random() * H : H;
+    this.vy = -(Math.random() * .4 + .1);
+    this.vx = (Math.random() - .5) * .2;
+    this.life = 0; this.maxLife = Math.random() * 400 + 200;
+    this.r = Math.random() * 1.5 + .5;
+  }
+  update() {
+    this.x += this.vx + Math.sin(this.life * .05) * .3;
+    this.y += this.vy;
+    this.life++;
+    if (this.y < -10 || this.life > this.maxLife) this.reset(false);
+  }
+  draw() {
+    const t = this.life / this.maxLife;
+    const a = t < .2 ? t/.2 : t > .8 ? (1-t)/.2 : 1;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(61,97,40,${a * .2})`;
+    ctx.fill();
+  }
+}
+
+let leaves = [], vines = [];
+function initLeaves() {
+  leaves = Array.from({length: Math.min(40, W/18)}, () => new Leaf());
+  vines = Array.from({length: 20}, () => new VineParticle());
+}
+initLeaves();
+
+function frame() {
+  ctx.clearRect(0, 0, W, H);
+  vines.forEach(v => { v.update(); v.draw(); });
+  leaves.forEach(l => { l.update(); l.draw(); });
+  requestAnimationFrame(frame);
+}
+frame();
+</script>
 </body>
 </html>
