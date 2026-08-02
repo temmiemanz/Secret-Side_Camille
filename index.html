@@ -951,43 +951,66 @@ body {
 }
 .cob-manual-btn:hover { background: rgba(125,184,122,0.08); border-color: var(--accent); }
 
-.cob-modal-overlay {
-  display: none; position: fixed; inset: 0; z-index: 9999;
-  background: rgba(0,0,0,0.75); backdrop-filter: blur(3px);
-  align-items: center; justify-content: center;
+.cob-manual-page {
+  position: fixed; inset: 0; z-index: 2147483647;
+  background: #171c15;
+  display: none; flex-direction: column;
+  overflow: hidden;
 }
-.cob-modal-overlay.open { display: flex; }
-.cob-modal {
-  background: #1a1f18; border: 1px solid rgba(125,184,122,0.25);
-  border-radius: 6px; max-width: 680px; width: 92vw;
-  max-height: 82vh; overflow-y: auto;
-  padding: 28px 30px; position: relative;
+.cob-manual-page.open { display: flex; }
+
+.cob-manual-topbar {
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 20px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(125,184,122,0.15);
+  background: rgba(20,26,18,0.98);
 }
-.cob-modal::-webkit-scrollbar { width: 5px; }
-.cob-modal::-webkit-scrollbar-thumb { background: rgba(125,184,122,0.3); border-radius: 99px; }
-.cob-modal-close {
-  position: sticky; top: 0; float: right;
-  background: none; border: 1px solid rgba(125,184,122,0.25);
-  color: var(--dim); cursor: pointer; border-radius: 4px;
-  padding: 3px 10px; font-size: 12px; font-family: var(--font-display);
-  font-style: italic; transition: all 0.15s; margin-bottom: 12px;
+.cob-manual-back {
+  background: none; border: none; color: var(--accent);
+  font-family: var(--font-display); font-size: 13px; font-style: italic;
+  cursor: pointer; padding: 0; letter-spacing: 0.06em;
+  transition: color 0.15s;
 }
-.cob-modal-close:hover { border-color: var(--accent); color: var(--accent); }
-.cob-modal h2 {
-  font-family: var(--font-display); font-size: 18px; font-weight: 700;
-  font-style: italic; color: var(--accent); margin: 0 0 4px;
-  letter-spacing: 0.06em;
+.cob-manual-back:hover { color: var(--text); }
+.cob-manual-title {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  font-style: italic; color: var(--accent); letter-spacing: 0.06em;
 }
-.cob-modal h3 {
-  font-family: var(--font-display); font-size: 13px; font-weight: 700;
-  color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;
-  margin: 18px 0 6px; border-bottom: 1px solid rgba(125,184,122,0.12);
-  padding-bottom: 4px;
+.cob-manual-sub {
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(125,184,122,0.35); margin-left: auto;
 }
-.cob-modal p { font-size: 13px; color: var(--dim); line-height: 1.85; margin: 0 0 10px; }
-.cob-modal p strong { color: var(--text); font-weight: 600; }
-.cob-modal p em { color: var(--accent); font-style: normal; }
-.cob-modal .cob-warn { margin-top: 18px; font-size: 12px; }
+
+.cob-manual-body {
+  flex: 1; overflow-y: auto; padding: 28px 32px 48px;
+  max-width: 700px; width: 100%; margin: 0 auto;
+}
+.cob-manual-body::-webkit-scrollbar { width: 4px; }
+.cob-manual-body::-webkit-scrollbar-thumb { background: rgba(125,184,122,0.2); border-radius: 99px; }
+
+.cob-manual-body h3 {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase;
+  margin: 26px 0 8px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(125,184,122,0.14);
+}
+.cob-manual-body h3:first-child { margin-top: 0; }
+.cob-manual-body p {
+  font-size: 13px; color: var(--dim); line-height: 1.88; margin: 0 0 10px;
+}
+.cob-manual-body p strong { color: var(--text); font-weight: 600; }
+.cob-manual-body p em { color: var(--accent); font-style: normal; }
+.cob-example {
+  background: rgba(125,184,122,0.05);
+  border-left: 2px solid rgba(125,184,122,0.28);
+  border-radius: 0 4px 4px 0;
+  padding: 10px 14px; margin: 6px 0 14px;
+  font-size: 12px; color: rgba(155,175,145,0.85); line-height: 1.8;
+  font-style: italic;
+}
+.cob-example strong { color: rgba(125,184,122,0.9); font-style: normal; }
+.cob-manual-body .cob-warn { font-size: 12px; margin-top: 24px; }
+
 
 </style>
 </head>
@@ -1299,57 +1322,13 @@ body {
             Build carefully. You are not getting it back.
           </div>
 
-          <button class="cob-manual-btn" onclick="document.getElementById('cobManual').classList.add('open')">
+          <button class="cob-manual-btn" onclick="cobOpenManual()">
             Full Manual →
           </button>
 
         </div>
 
-        <!-- FULL MANUAL MODAL -->
-        <div class="cob-modal-overlay" id="cobManual">
-          <div class="cob-modal">
-            <button class="cob-modal-close" onclick="document.getElementById('cobManual').classList.remove('open')">✕ Close</button>
-            <h2>Cobbling — Full Manual</h2>
-            <p style="font-size:11px;color:var(--muted);margin-top:-2px;margin-bottom:16px;font-style:italic;">Conjuration · EGG</p>
 
-            <h3>Valid Materials</h3>
-            <p>Any material that is not currently living qualifies. All inorganic matter: metal, stone, glass, plastic, rubber, ceramic, electronics. Deceased organic matter: bone, dried wood, leather, preserved tissue, dead plant matter. Not anything alive at the time of assembly. A freshly cut branch does not qualify. A dried plank does. If it can rot it must already be dead. If it cannot rot it qualifies unconditionally.</p>
-
-            <h3>Building a Cobbled</h3>
-            <p>One torso, one head, four limbs minimum. These are structural categories not shapes. A torso is whatever serves as the central mass. A head is whatever is designated as the seat of awareness. Limbs are anything extending from the torso. There is no required shape. A filing cabinet can be a torso. A glass jar can be a head. A chain can be a limb. Physics must hold. Camille must touch every connection himself. Additional parts beyond the minimum are allowed if physically plausible.</p>
-
-            <h3>Replacing Parts</h3>
-            <p>Any part including head and torso can be replaced at any time by Camille or the Cobbled itself. New parts are understood instantly on connection. Replacing the head or torso does not kill the Cobbled as long as the swap happens without full disconnection. Removing a head or torso with nothing replacing it kills the Cobbled.</p>
-
-            <h3>Body Knowledge</h3>
-            <p>A Cobbled understands its body completely from the instant of completion. Every joint, every structural limit, every range of motion. A rigid rod arm swings only from the shoulder. A cable arm can coil and apply pressure at any point. This extends to every integrated device. A firearm built into a limb: full knowledge of action, trigger, range, recoil, clearing, and every alternative use. A generator: output, voltage, load regulation, failure conditions, and how to route power through the body. A makeshift machine of any kind: understood as thoroughly as possible, often more so, because the machine is part of it. If multiple systems interact the Cobbled understands the full combined architecture. This knowledge is permanent.</p>
-
-            <h3>Senses</h3>
-            <p>All five human senses by default. Additional senses come from components and are understood fully. Sonar: spatial perception through sound reflection. Infrared: heat signatures. Chemical sensors: substance detection and identification far beyond human capability. Radio components: signal reception or transmission. Optical magnification: distance vision. Seismic components: vibration detection through ground contact. No cap on additional senses.</p>
-
-            <h3>Personality</h3>
-            <p>Every Cobbled has a personality shaped by its materials. Not predictable, not formulaic. Between 20 and 50 percent is entirely random with no relation to materials. The DM determines what emerges. A Cobbled made from medical equipment might be methodical, or convinced it knows best. One from wood might be patient, or stubborn, or afraid of fire, or fascinated by it. One from weapons might be aggressive or deeply tired. Some have no personality at all. That is also a personality. Camille finds out by watching.</p>
-
-            <h3>Will</h3>
-            <p>Every Cobbled has a will of its own. Completely random. With one Cobbled Camille's presence fills the room and his intent is easy to follow not from obedience but from undivided attention. Each additional Cobbled divides that presence equally. No number. No roll. Camille learns by watching what they actually do.</p>
-
-            <h3>Variants</h3>
-            <p><strong>Rare.</strong> Camille will not know one exists until the behavior makes it clear. A Variant is entirely its own being in every sense. It can have a completely different personality from what it showed before, a different set of goals, a different will, or any combination of the above. Nothing carries over from what Camille expected. Camille's influence is functionally zero. This is not inherently dangerous on its own. A Variant may stay close, help willingly, leave without a word, or openly pursue something entirely unrelated to Camille's intent. There is no predicting it. Once a Variant is suspected, document it and set aside all prior assumptions about that Cobbled entirely.</p>
-
-            <h3>Energy</h3>
-            <p>The body requires no energy. Movement, sensation, thought, and will cost nothing. Only components that would require power as standalone devices need resources. A flamethrower arm needs rest to fire again if no fuel is present. A generator needs fuel to produce output. Batteries drain at standard rate. Running out of a resource disables that component only.</p>
-
-            <h3>Death</h3>
-            <p>Lost limbs do not kill. Death comes only from complete destruction of the head, complete destruction of the torso, or full separation of head from torso with nothing replacing it. A Cobbled can choose to end itself. Whether it does so at Camille's request depends on influence and whether it agrees.</p>
-
-            <div class="cob-warn">
-              <strong>⚠ Important.</strong> A Cobbled is not a tool, weapon, pet, or servant. Once built it is its own being. Camille has no remote link, no tracking, no communication, no override, and no recall. If it walks away it is gone until it chooses to return. If it decides Camille is wrong it will act on that. If it is a Variant, none of the above applies even loosely.<br><br>
-              There is a great deal that will not be told to you because the variables are near infinite and cannot all be accounted for in advance. Things you will have to discover through play. For example: <em>if the head has no opening that functions as a mouth, the Cobbled cannot speak.</em> Nobody will tell you that unless you think to ask.<br><br>
-              Every Cobbled released into the world is a new life with no guarantee of how it will use that life. Build carefully. Think about what you are making it from. You are not getting it back and what it does after leaving your hands is entirely its own.
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="ab-pane" id="ab-actions">
 
@@ -2258,6 +2237,15 @@ function dsLoad() {
 }
 
 
+// ── COBBLING MANUAL ──
+function cobOpenManual() {
+  document.getElementById('cobManualPage').classList.add('open');
+  document.getElementById('cobManualPage').querySelector('.cob-manual-body').scrollTop = 0;
+}
+function cobCloseManual() {
+  document.getElementById('cobManualPage').classList.remove('open');
+}
+
 load();
 loadNoteDocs();
 loadActions();
@@ -2518,5 +2506,84 @@ document.querySelectorAll('.prof-val').forEach(el => {
     <button class="dice-roll-btn" onclick="rollDice()">Roll</button>
   </div>
 </div>
+
+
+<!-- FULL MANUAL PAGE -->
+<div class="cob-manual-page" id="cobManualPage">
+  <div class="cob-manual-topbar">
+    <button class="cob-manual-back" onclick="cobCloseManual()">← Back</button>
+    <span class="cob-manual-title">Cobbling — Full Manual</span>
+    <span class="cob-manual-sub">Conjuration · EGG</span>
+  </div>
+  <div class="cob-manual-body">
+
+    <h3>Valid Materials</h3>
+    <p>Any material that is not currently living qualifies. All inorganic matter — metal, stone, glass, plastic, rubber, ceramic, electronics. Deceased organic matter — bone, dried wood, leather, preserved tissue, dead plant matter. If it can rot, it must already be dead. If it cannot rot, it qualifies unconditionally. Nothing alive at time of assembly.</p>
+    <div class="cob-example">
+      <strong>Qualifies:</strong> a rusted car door, a deer skull, a dried oak plank, a broken radio, a ceramic bowl, a coil of copper wire.<br>
+      <strong>Does not qualify:</strong> a freshly cut branch, a living insect, anything still biologically active.
+    </div>
+
+    <h3>Building a Cobbled</h3>
+    <p>One torso, one head, four limbs minimum. These are structural categories not shapes. A torso is the central mass everything connects to. A head is the seat of awareness. Limbs are anything extending from the torso. Physics must hold — the structure must support itself and move. Camille must physically touch every connection himself. More parts are allowed if the physics work.</p>
+    <div class="cob-example">
+      <strong>Example A:</strong> a car engine block as the torso, a glass fishbowl as the head, four scaffolding pipes as legs. Functional if the pipes can bear the engine weight and Camille can physically connect them.<br>
+      <strong>Example B:</strong> a wooden chair body, a porcelain doll head, two mop handles and two rake handles as limbs. Simple, lightweight, fast to build.
+    </div>
+
+    <h3>Replacing Parts</h3>
+    <p>Any part including the head and torso can be replaced at any time by Camille or by the Cobbled itself. New parts are understood completely the instant the connection is made. Replacing head or torso is safe as long as nothing is left fully disconnected. Full removal with nothing replacing it kills the Cobbled immediately.</p>
+    <div class="cob-example">
+      <strong>Example:</strong> a Cobbled's arm is destroyed in a fight. Camille hands it a metal pipe. The instant it attaches, the Cobbled knows every structural property of that pipe and every way it can be used.
+    </div>
+
+    <h3>Body Knowledge</h3>
+    <p>A Cobbled understands its body completely from the instant of completion. Every joint, every limit, every range of motion. This extends to every integrated device without exception — a firearm limb means full knowledge of action, trigger, range, recoil, clearing, and every possible use. A generator means output, voltage, load regulation, failure points, and how to route power through itself. A makeshift machine: understood more thoroughly than whoever built it, because it is the machine. Multiple interacting systems are understood as one complete architecture. This knowledge never degrades.</p>
+    <div class="cob-example">
+      <strong>Example:</strong> Camille builds a Cobbled with a salvaged car alternator in its chest connected to copper contacts on its palms. It immediately understands the output voltage, how long it can sustain generation, and that it can conduct electricity through anything it touches — including applications Camille never considered.
+    </div>
+
+    <h3>Senses</h3>
+    <p>All five human senses by default regardless of materials. Additional senses come entirely from components and are understood fully from the moment of assembly. There is no cap on additional senses.</p>
+    <div class="cob-example">
+      <strong>Sonar component:</strong> full spatial awareness through sound, works in total darkness.<br>
+      <strong>Infrared lens:</strong> heat signature vision, can track living things through walls if the signal is strong enough.<br>
+      <strong>Chemical sensors:</strong> substance identification in the air or by contact, far beyond human capability.<br>
+      <strong>Radio hardware:</strong> signal reception or transmission depending on what is integrated.<br>
+      <strong>Seismic plate:</strong> detects vibrations through ground, knows what is moving nearby and roughly how heavy.
+    </div>
+
+    <h3>Personality</h3>
+    <p>Every Cobbled has a personality shaped by its materials. Not predictable. Not formulaic. Between 20 and 50 percent is entirely random with no connection to the materials at all. The DM determines what emerges. Camille finds out by watching. Some Cobbled have no personality at all. That is also a personality.</p>
+    <div class="cob-example">
+      <strong>Made from medical equipment:</strong> might be methodical and precise, or coldly convinced it knows better than everyone.<br>
+      <strong>Made from wood:</strong> might be patient and unhurried, immovably stubborn, terrified of fire, or quietly fascinated by it.<br>
+      <strong>Made from weapons:</strong> might be aggressive and decisive, or profoundly tired in a way it cannot explain.<br>
+      <strong>Made from children's toys:</strong> might be cheerful and erratic, or strangely philosophical about impermanence.
+    </div>
+
+    <h3>Will</h3>
+    <p>Every Cobbled has a will of its own. Completely random. With one Cobbled, Camille's presence is undivided and the Cobbled tends to follow his intent — not from obedience, just from having nothing else competing for its attention. Each additional Cobbled splits that presence equally. No number. No roll. Camille learns what influence he actually has by watching what they do when he is not looking.</p>
+
+    <h3>Variants</h3>
+    <p><strong>Rare.</strong> Camille will not know one exists until the behavior makes it obvious. A Variant is entirely its own being. It can have a completely different personality from what it showed before, different goals, a different will, or any combination. Nothing Camille expected carries over. His influence is functionally zero.</p>
+    <p>This is not inherently bad. A Variant may stay and help willingly. It may leave quietly. It may develop its own goals and pursue them openly. It may disagree with Camille clearly and directly. Once suspected, document it. Treat all prior assumptions about that Cobbled as void.</p>
+
+    <h3>Energy</h3>
+    <p>The body requires no energy at all. Movement, thought, will, and sensation cost nothing. The only exception is components that would require power as standalone devices. A flamethrower arm needs rest to fire again without fuel. A generator needs fuel to produce output. Batteries drain at normal rate when in use. Running out disables that component only — the Cobbled continues.</p>
+
+    <h3>Death</h3>
+    <p>Lost limbs do not kill. A Cobbled missing three limbs is still alive. Death comes only from complete destruction of the head, complete destruction of the torso, or full separation of head from torso with nothing replacing it. A Cobbled can choose to end itself. Whether it does so at Camille's request depends entirely on how much it is listening and whether it agrees.</p>
+
+    <div class="cob-warn">
+      <strong>⚠ A Cobbled is not yours.</strong> Once built it is its own being. No remote link. No tracking. No communication. No override. No recall. If it walks away it is gone until it chooses to come back. If it decides Camille is wrong it will act on that. If it is a Variant, none of the above applies in any form.<br><br>
+      There is a great deal that will not be told to you because the variables are near infinite and cannot all be accounted for in advance. You will discover things only through play. <em>If the head has no opening that functions as a mouth, the Cobbled cannot speak. Nobody will tell you that unless you think to ask.</em><br><br>
+      Every Cobbled released into the world is a new life with no guarantee of how it uses that life. Build carefully. Think about what you are assembling it from and what that might mean when it wakes up. You are not getting it back.
+    </div>
+
+  </div>
+</div>
+      
+
 </body>
 </html>
