@@ -852,47 +852,50 @@ body {
 .camille-info-val { color: var(--dim); }
 
 
-/* Vine crawl on card corners */
+/* Cards — vine wraps the border naturally */
+/* Left border IS the vine — organic gradient not a line */
+.card {
+  position: relative;
+  border-left: 2px solid transparent;
+  background-image:
+    linear-gradient(rgba(30,34,25,0.96), rgba(30,34,25,0.96)),
+    linear-gradient(180deg,
+      transparent 0%,
+      rgba(74,104,56,0.6) 15%,
+      rgba(125,184,122,0.8) 35%,
+      rgba(90,140,75,0.9) 55%,
+      rgba(74,104,56,0.5) 78%,
+      transparent 100%
+    );
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* Moss seeping in at card bottom corners */
 .card::after {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 30px 60px at 0% 0%, rgba(74,120,64,0.18) 0%, transparent 100%),
-    radial-gradient(ellipse 20px 80px at 100% 100%, rgba(58,104,48,0.14) 0%, transparent 100%),
-    radial-gradient(ellipse 60px 20px at 0% 100%, rgba(74,120,64,0.12) 0%, transparent 100%);
+    radial-gradient(ellipse 50px 18px at 8% 100%, rgba(74,104,56,0.18) 0%, transparent 100%),
+    radial-gradient(ellipse 35px 14px at 88% 100%, rgba(58,88,42,0.14) 0%, transparent 100%),
+    radial-gradient(ellipse 20px 40px at 0% 70%, rgba(74,104,56,0.1) 0%, transparent 100%);
   border-radius: inherit; z-index: 0;
 }
+.card > * { position: relative; z-index: 1; }
 
-/* Moss texture on stat columns */
+/* Stat col — mossy bottom edge */
+.stat-col {
+  position: relative; overflow: hidden;
+  border-bottom: 2px solid rgba(90,140,75,0.25);
+}
 .stat-col::after {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(ellipse 40px 15px at 20% 95%, rgba(74,120,64,0.15) 0%, transparent 100%),
-    radial-gradient(ellipse 25px 10px at 75% 98%, rgba(58,90,45,0.12) 0%, transparent 100%);
-  border-radius: inherit;
-}
-.stat-col { position: relative; overflow: hidden; }
-
-/* Corner vine accent stronger */
-.card::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(180deg,
-    rgba(125,184,122,0.0) 0%,
-    rgba(125,184,122,0.5) 20%,
-    rgba(90,154,85,0.7) 40%,
-    rgba(125,184,122,0.5) 70%,
-    rgba(90,154,85,0.3) 90%,
-    rgba(125,184,122,0.0) 100%
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 6px;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(74,104,56,0.3) 20%,
+    rgba(125,184,122,0.5) 50%,
+    rgba(74,104,56,0.3) 80%, transparent 100%
   );
-  pointer-events: none; z-index: 2;
+  pointer-events: none;
 }
-
-/* Green crack lines — concrete breaking open */
-.stats-grid .stat-col:first-child { border-left: 2px solid rgba(125,184,122,0.35); }
-.stats-grid .stat-col:last-child  { border-right: 2px solid rgba(74,120,64,0.2); }
 
 </style>
 </head>
@@ -2048,7 +2051,7 @@ document.querySelectorAll('.locked-field').forEach(el => {
 document.querySelectorAll('.prof-val').forEach(el => {
   el.addEventListener('input', () => { refreshZeroHidden(); save(); });
 });
-// ── CAMILLE — OVERGROWN CITY ANIMATION ──
+// ── CAMILLE — NATURAL VINE GROWTH ──
 (function() {
   const canvas = document.getElementById('leafCanvas');
   if (!canvas) return;
@@ -2058,171 +2061,212 @@ document.querySelectorAll('.prof-val').forEach(el => {
   function resize() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
+    buildScene();
   }
+
+  // ── Vine system ──
+  // Vines grow FROM edges, following gravity + slight randomness
+  // They never float in midair — always rooted to a wall/edge
+  let vines = [];
+
+  function growVine(x0, y0, dirX, dirY) {
+    const pts = [{x: x0, y: y0}];
+    let ax = x0, ay = y0;
+    let vx = dirX, vy = dirY;
+    const totalLen = 120 + Math.random() * 280;
+    const step = 14;
+    const steps = Math.floor(totalLen / step);
+
+    for (let i = 0; i < steps; i++) {
+      // Gravity pulls down, slight wander left/right
+      vx += (Math.random() - 0.5) * 0.25;
+      vy += 0.04; // gravity
+      // Keep mostly downward
+      const mag = Math.sqrt(vx*vx + vy*vy);
+      vx = (vx/mag) * 0.6;
+      vy = (vy/mag) * 0.9;
+      ax += vx * step;
+      ay += vy * step;
+      pts.push({x: ax, y: ay});
+      if (ay > H + 40) break;
+    }
+
+    // Leaves — only on outside of curve, natural
+    const leaves = [];
+    for (let i = 2; i < pts.length; i++) {
+      if (Math.random() < 0.55) {
+        const p  = pts[i];
+        const pp = pts[i-1];
+        const stemAngle = Math.atan2(p.y-pp.y, p.x-pp.x);
+        // leaf hangs off to the side
+        const side   = Math.random() < 0.5 ? 1 : -1;
+        const hang   = stemAngle + side * (Math.PI*0.4 + Math.random()*0.5);
+        const dist   = 8 + Math.random() * 12;
+        leaves.push({
+          x:     p.x + Math.cos(hang)*dist,
+          y:     p.y + Math.sin(hang)*dist,
+          angle: hang + Math.PI*0.5,
+          size:  4 + Math.random() * 8,
+          phase: Math.random() * Math.PI * 2,
+          alpha: 0.5 + Math.random() * 0.35,
+          col:   ['#4a7840','#5a9a55','#7db87a','#3d6435'][Math.floor(Math.random()*4)],
+        });
+      }
+    }
+    return {
+      pts,
+      leaves,
+      phase:     Math.random() * Math.PI * 2,
+      alpha:     0.55 + Math.random() * 0.3,
+      thickness: 1.0 + Math.random() * 1.6,
+      col:       Math.random() < 0.5 ? '#3a5830' : '#4a6838',
+    };
+  }
+
+  // ── Moss patches ──
+  let moss = [];
+  function buildMoss() {
+    moss = [];
+    // Moss only near edges and corners — where moisture collects
+    const spots = [
+      {x:0,    y:0},    {x:W,    y:0},
+      {x:0,    y:H},    {x:W,    y:H},
+      {x:W*0.3,y:0},   {x:W*0.7,y:0},
+      {x:0,    y:H*0.4},{x:W,    y:H*0.6},
+    ];
+    spots.forEach(s => {
+      const n = 3 + Math.floor(Math.random()*4);
+      for (let i=0;i<n;i++) {
+        moss.push({
+          x:     s.x + (Math.random()-0.5)*80,
+          y:     s.y + (Math.random()-0.5)*60,
+          rx:    20 + Math.random()*55,
+          ry:    8  + Math.random()*22,
+          alpha: 0.06 + Math.random()*0.09,
+          col:   Math.random()<0.5 ? '74,104,56' : '58,88,42',
+        });
+      }
+    });
+  }
+
+  function buildScene() {
+    vines = [];
+    // Vines from top edge — gravity pulls them down
+    const topCount = Math.floor(W / 110);
+    for (let i = 0; i < topCount; i++) {
+      const x = (W / topCount) * i + Math.random() * 60 - 30;
+      vines.push(growVine(x, -5, (Math.random()-0.5)*0.3, 0.8));
+    }
+    // Vines from left edge — grow right and down
+    for (let i = 0; i < 4; i++) {
+      const y = Math.random() * H * 0.7;
+      vines.push(growVine(-5, y, 0.6, 0.5 + Math.random()*0.4));
+    }
+    // Vines from right edge
+    for (let i = 0; i < 3; i++) {
+      const y = Math.random() * H * 0.7;
+      vines.push(growVine(W+5, y, -0.6, 0.5 + Math.random()*0.4));
+    }
+    buildMoss();
+  }
+
   resize();
   window.addEventListener('resize', resize);
 
-  // ── STATIC VINES — drawn on resize, persistent ──
-  let vineData = [];
-  function buildVines() {
-    vineData = [];
-    const vineCount = 12;
-    for (let i = 0; i < vineCount; i++) {
-      // Vines start from top or sides
-      const fromSide = Math.random() < 0.4;
-      const x0 = fromSide ? (Math.random() < 0.5 ? 0 : W) : Math.random() * W;
-      const y0 = fromSide ? Math.random() * H * 0.6 : 0;
-      const length = 80 + Math.random() * 220;
-      const segs = Math.floor(length / 18);
-      const pts = [{x: x0, y: y0}];
-      let cx = x0, cy = y0;
-      let dx = (Math.random() - 0.5) * 0.8;
-      let dy = 0.6 + Math.random() * 0.6;
-      if (fromSide) { dx = x0 === 0 ? 0.4 : -0.4; dy = 0.5 + Math.random() * 0.4; }
-      for (let j = 0; j < segs; j++) {
-        dx += (Math.random() - 0.5) * 0.3;
-        dx = Math.max(-0.9, Math.min(0.9, dx));
-        cx += dx * 18 + (Math.random()-0.5)*8;
-        cy += dy * 18;
-        pts.push({x: cx, y: cy});
-      }
-      // Leaves along vine
-      const leaves = pts.slice(1).map((p, i) => ({
-        x: p.x + (Math.random()-0.5)*14,
-        y: p.y + (Math.random()-0.5)*6,
-        size: 4 + Math.random() * 7,
-        angle: (Math.random()-0.5)*1.2,
-        phase: Math.random()*Math.PI*2,
-        alpha: 0.55 + Math.random()*0.3,
-        col: Math.random() < 0.35 ? '#4a7840' : Math.random() < 0.6 ? '#5a9a55' : '#7db87a',
-        side: Math.random() < 0.5 ? 1 : -1,
-      }));
-      vineData.push({
-        pts,
-        leaves,
-        phase: Math.random()*Math.PI*2,
-        alpha: 0.5 + Math.random()*0.35,
-        thickness: 1.2 + Math.random()*1.8,
-        col: Math.random() < 0.5 ? '#3a5830' : '#4a6838',
-      });
-    }
-  }
-  buildVines();
-  window.addEventListener('resize', buildVines);
-
-  // ── MOSS PATCHES ── scattered on background
-  let mossPatches = [];
-  function buildMoss() {
-    mossPatches = [];
-    for (let i = 0; i < 18; i++) {
-      mossPatches.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        rx: 30 + Math.random() * 90,
-        ry: 10 + Math.random() * 30,
-        alpha: 0.04 + Math.random() * 0.07,
-        col: Math.random() < 0.5 ? '#4a6838' : '#5a7848',
-      });
-    }
-  }
-  buildMoss();
-  window.addEventListener('resize', buildMoss);
-
-  // ── FALLING PARTICLES ──
-  const particles = Array.from({length: 40}, (_, i) => ({
-    x:     Math.random() * 1920,
-    y:     Math.random() * 1080,
-    size:  i < 22 ? (3 + Math.random() * 5) : (1 + Math.random() * 1.5),
-    type:  i < 22 ? 'leaf' : 'spore',
-    vx:    (Math.random()-0.5)*0.25,
-    vy:    0.12 + Math.random()*0.28,
-    angle: Math.random()*Math.PI*2,
-    spin:  (Math.random()-0.5)*0.010,
-    phase: Math.random()*Math.PI*2,
-    alpha: 0.35 + Math.random()*0.4,
-    col:   Math.random()<0.4 ? '#4a7840' : Math.random()<0.6 ? '#5a9a55' : '#7db87a',
-  }));
-
-  function drawLeaf(x, y, size, angle, alpha, col) {
+  function drawLeaf(x, y, size, angle, alpha, col, swayOffset) {
     ctx.save();
-    ctx.translate(x,y); ctx.rotate(angle);
+    ctx.translate(x, y);
+    ctx.rotate(angle + swayOffset);
     ctx.globalAlpha = alpha;
     const s = size;
     ctx.beginPath();
-    ctx.moveTo(0,-s);
-    ctx.bezierCurveTo(s*.9,-s*.4, s*.9,s*.4, 0,s);
-    ctx.bezierCurveTo(-s*.9,s*.4, -s*.9,-s*.4, 0,-s);
+    ctx.moveTo(0, -s);
+    ctx.bezierCurveTo(s*.85,-s*.35, s*.85,s*.35, 0, s);
+    ctx.bezierCurveTo(-s*.85,s*.35, -s*.85,-s*.35, 0, -s);
     ctx.fillStyle = col;
     ctx.fill();
-    ctx.beginPath(); ctx.moveTo(0,-s*.85); ctx.lineTo(0,s*.85);
-    ctx.strokeStyle='rgba(30,55,20,0.5)'; ctx.lineWidth=0.6; ctx.stroke();
+    // midrib vein
+    ctx.beginPath(); ctx.moveTo(0,-s*.8); ctx.lineTo(0,s*.8);
+    ctx.strokeStyle='rgba(25,45,18,0.45)'; ctx.lineWidth=0.55; ctx.stroke();
     ctx.restore();
   }
 
-  function drawSpore(x, y, size, alpha) {
-    ctx.beginPath(); ctx.arc(x,y,size,0,Math.PI*2);
-    ctx.fillStyle='rgba(158,184,154,'+alpha+')'; ctx.fill();
-  }
+  // Falling leaves — sparse, gentle
+  const fallers = Array.from({length:18}, () => ({
+    x:     Math.random()*1920,
+    y:     Math.random()*1080,
+    size:  3 + Math.random()*5,
+    vx:    (Math.random()-0.5)*0.2,
+    vy:    0.1 + Math.random()*0.22,
+    angle: Math.random()*Math.PI*2,
+    spin:  (Math.random()-0.5)*0.008,
+    phase: Math.random()*Math.PI*2,
+    alpha: 0.3 + Math.random()*0.35,
+    col:   ['#4a7840','#5a9a55','#7db87a','#3d6435'][Math.floor(Math.random()*4)],
+  }));
 
   let t = 0;
   function frame() {
     ctx.clearRect(0,0,W,H);
+    t += 0.005;
 
-    // ── Moss patches ──
-    mossPatches.forEach(m => {
-      const g = ctx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.rx);
-      g.addColorStop(0, m.col.replace(')',','+m.alpha+')').replace('rgb','rgba'));
-      // use explicit rgba
-      const rgb = m.col === '#4a6838' ? '74,104,56' : '90,120,72';
-      const g2 = ctx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.rx);
-      g2.addColorStop(0, 'rgba('+rgb+','+m.alpha+')');
-      g2.addColorStop(1, 'transparent');
-      ctx.fillStyle = g2;
+    // Moss
+    moss.forEach(m => {
       ctx.save();
       ctx.scale(1, m.ry/m.rx);
+      const g = ctx.createRadialGradient(m.x, m.y*(m.rx/m.ry), 0, m.x, m.y*(m.rx/m.ry), m.rx);
+      g.addColorStop(0, 'rgba('+m.col+','+m.alpha+')');
+      g.addColorStop(0.6,'rgba('+m.col+','+(m.alpha*0.4)+')');
+      g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(m.x, m.y*(m.rx/m.ry), m.rx, 0, Math.PI*2);
       ctx.fill();
       ctx.restore();
     });
 
-    // ── Static vines ──
-    t += 0.006;
-    vineData.forEach(v => {
-      const sway = Math.sin(t + v.phase) * 2.5;
-      // Draw vine stem
+    // Vines — gentle collective sway
+    const globalSway = Math.sin(t) * 1.8;
+    vines.forEach(v => {
+      const sway = globalSway * Math.sin(v.phase);
       ctx.beginPath();
       ctx.moveTo(v.pts[0].x, v.pts[0].y);
-      for (let i = 1; i < v.pts.length; i++) {
-        const mx = (v.pts[i-1].x + v.pts[i].x)/2 + sway*0.5;
-        const my = (v.pts[i-1].y + v.pts[i].y)/2;
-        ctx.quadraticCurveTo(mx, my, v.pts[i].x + sway*(i/v.pts.length), v.pts[i].y);
+      for (let i=1;i<v.pts.length;i++) {
+        const prog = i/v.pts.length;
+        const sx = sway * prog;
+        if (i < v.pts.length-1) {
+          const nx = v.pts[i+1].x + sway*((i+1)/v.pts.length);
+          const ny = v.pts[i+1].y;
+          ctx.quadraticCurveTo(v.pts[i].x+sx, v.pts[i].y, (v.pts[i].x+sx+nx)/2, (v.pts[i].y+ny)/2);
+        } else {
+          ctx.lineTo(v.pts[i].x + sx, v.pts[i].y);
+        }
       }
       ctx.strokeStyle = v.col;
       ctx.lineWidth   = v.thickness;
       ctx.globalAlpha = v.alpha;
+      ctx.lineCap     = 'round';
       ctx.stroke();
       ctx.globalAlpha = 1;
 
-      // Draw leaves along vine
-      v.leaves.forEach((l, li) => {
-        const prog = li / v.leaves.length;
-        const sx = sway * prog * l.side * 0.4;
-        const swayAngle = Math.sin(t*0.8 + l.phase) * 0.12;
-        drawLeaf(l.x + sx, l.y, l.size, l.angle + swayAngle, l.alpha, l.col);
+      // Leaves sway slightly more than stem
+      const leafSway = Math.sin(t*0.9 + v.phase);
+      v.leaves.forEach(l => {
+        const prog = l.y / H;
+        const sx   = sway * prog;
+        const sw   = leafSway * 0.1 + Math.sin(t*1.1+l.phase)*0.08;
+        drawLeaf(l.x+sx, l.y, l.size, l.angle, l.alpha, l.col, sw);
       });
     });
 
-    // ── Falling particles ──
-    particles.forEach(p => {
-      p.x += p.vx + Math.sin(t+p.phase)*0.15;
+    // Falling leaves
+    fallers.forEach(p => {
+      p.x += p.vx + Math.sin(t+p.phase)*0.12;
       p.y += p.vy;
       p.angle += p.spin;
-      if (p.y > H+20) { p.y=-20; p.x=Math.random()*W; }
-      if (p.x<-20) p.x=W+20;
-      if (p.x>W+20) p.x=-20;
-      if (p.type==='leaf') drawLeaf(p.x, p.y, p.size, p.angle, p.alpha, p.col);
-      else drawSpore(p.x, p.y, p.size*0.5, p.alpha*0.6);
+      if (p.y>H+20) { p.y=-20; p.x=Math.random()*W; }
+      if (p.x<-20) p.x=W+20; if (p.x>W+20) p.x=-20;
+      drawLeaf(p.x, p.y, p.size, p.angle, p.alpha, p.col, 0);
     });
 
     requestAnimationFrame(frame);
