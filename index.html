@@ -3496,26 +3496,6 @@ function cobCloseManual() {
   document.getElementById('cobManualPage').classList.remove('open');
 }
 
-// ══════════════════════════════════════════
-// STARTING WEAPON — seeded once on first-ever load
-// ══════════════════════════════════════════
-if (localStorage.getItem(INV_KEY) === null) {
-  invItems.push({
-    id: 'i'+Date.now(), name: 'Lodestar', type: 'Weapon', rarity: 'Rare',
-    value: '', weight: '4', qty: 1, stackable: false,
-    desc: "Five magnetized lengths that answer to him and nobody else. Nothing sentimental about it. Just a tool that comes back when he needs it.\n\nCan be locked rigid, folded flat, or have its pull rerouted at will. Recalls to his hand from anywhere in sight as a single action.",
-    notes: '', props: 'Versatile', weaponWt: 'Medium', twoHanded: false, equippable: true, usable: false, consumable: false,
-    ac: '', armorType: 'Light', strReq: '', stealthDisadv: false,
-    ammoDamage: '', ammoDmgType: '', effect: '', uses: '',
-    fx: {str:'', mnd:'', sol:'', def:''}, conditions: [], customFields: [],
-    actions: [
-      { name:'Strike',  damage:'1d8+STR', dmgType:'Bludgeoning', range:'5 ft', notes:'' },
-      { name:'Recall',  damage:'', dmgType:'', range:'', notes:'Summon the staff to your hand from anywhere within sight, as an action.' }
-    ]
-  });
-  invSave(); invRender(); invApplyPassives();
-}
-
 // ── CAMILLE — NATURAL VINE GROWTH ──
 (function() {
   var canvas = document.getElementById('leafCanvas');
