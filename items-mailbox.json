@@ -56,6 +56,11 @@
       "cmdId": "c17909588500825358-Secret-Side_Camille",
       "type": "setLevel",
       "value": "1"
+    },
+    {
+      "cmdId": "c17911431533729846-Secret-Side_Camille",
+      "type": "setHp",
+      "current": "2"
     }
   ]
 }
